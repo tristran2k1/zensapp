@@ -1,15 +1,15 @@
 import 'dart:math';
-import 'dart:ui';
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
 
 ///The number of device pixels for each logical pixel.
-double get pixelRatio =>
-    PlatformDispatcher.instance.views.first.physicalSize.aspectRatio;
+double get pixelRatio => ui.window.devicePixelRatio;
 
-Size get size =>
-    PlatformDispatcher.instance.views.first.physicalSize / pixelRatio;
+Size get size => ui.window.physicalSize / pixelRatio;
 
-const guidelineBaseWidth = 375;
-const guidelineBaseHeight = 812;
+const guidelineBaseWidth = 428;
+const guidelineBaseHeight = 926;
 
 double kButtonRadius = 16;
 

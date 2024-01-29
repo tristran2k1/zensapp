@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ImageAssets {
   static getImagePng(
@@ -43,19 +43,19 @@ class ImageAssets {
     );
   }
 
-  // static SvgPicture svgAssets(
-  //   String name, {
-  //   Color? color,
-  //   double? width,
-  //   double? height,
-  //   BoxFit fit = BoxFit.contain,
-  // }) {
-  //   return SvgPicture.asset(
-  //     name,
-  //     color: color,
-  //     width: width,
-  //     height: height,
-  //     fit: fit,
-  //   );
-  // }
+  static SvgPicture svgAssets(
+    String name, {
+    Color? color,
+    double? width,
+    double? height,
+    BoxFit fit = BoxFit.contain,
+  }) {
+    return SvgPicture.asset(
+      name,
+      color: color,
+      width: width,
+      height: height,
+      fit: fit,
+    );
+  }
 }

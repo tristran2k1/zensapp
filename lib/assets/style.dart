@@ -3,12 +3,17 @@ import 'package:flutter/material.dart';
 import 'index.dart';
 
 TextStyle get fontApp => TextStyle(
-      // fontFamily: kFontFamily,
+      fontFamily: 'Poppins',
       fontWeight: FontWeight.normal,
       fontSize: 14.sp,
       color: Colors.black,
       decoration: TextDecoration.none,
     );
+
+TextStyle get secondFont => fontApp.copyWith(
+      fontFamily: 'Righteous',
+    );
+
 TextStyle get text8 => fontApp.copyWith(fontSize: 8.sp);
 
 TextStyle get text10 => fontApp.copyWith(fontSize: 10.sp);

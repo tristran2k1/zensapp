@@ -41,6 +41,9 @@ const Color kcNickel = Color(0xFF737373);
 const Color kcBottom = Color(0xff848683);
 const Color kcBackground = Color(0xff0F172A);
 
+const Color princetonOrange = Color(0xFFFF8124);
+const Color outrageousOrange = Color(0xFFFE724C);
+
 /// Rich Lavender
 /// #AD60C7
 const richLavenderColor = Color(0xFFAD60C7);
