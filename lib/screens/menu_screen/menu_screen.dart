@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zens_app/assets/index.dart';
+import 'package:zens_app/widgets/menu_screen/dish_widget.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -12,12 +13,15 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: culturedPearl,
       body: SizedBox(
         width: double.infinity,
         child: Column(
           children: [
             _header(context),
             _filter(context),
+            SizedBox(height: 16.h),
+            _listDishes(context),
           ],
         ),
       ),
@@ -43,7 +47,7 @@ class _MenuScreenState extends State<MenuScreen> {
         ),
         Container(
             alignment: Alignment.topRight,
-            margin: EdgeInsets.symmetric(vertical: 20.h),
+            margin: EdgeInsets.only(top: 20.h),
             child: ImageAssets.pngAsset(Png.menuBanner)),
         Container(
           margin: EdgeInsets.only(left: 27.w, top: 100.h),
@@ -66,6 +70,7 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 
+  final items = ['Nổi bật', 'Yêu thích', 'Bình chọn'];
   Widget _filter(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 27.w),
@@ -74,12 +79,81 @@ class _MenuScreenState extends State<MenuScreen> {
         children: [
           Row(
             children: [
-              Text('Tìm kiếm theo:'),
-              Text('Tìm kiếm theo:'),
+              Text('Tìm kiếm theo:', style: text14),
+              _dropdownWiget(context),
             ],
           ),
-          ImageAssets.svgAssets(Svg.cartIcon),
+          _yourCart(context),
         ],
+      ),
+    );
+  }
+
+  Widget _yourCart(BuildContext context) {
+    return Container(
+      width: 40.w,
+      height: 40.h,
+      decoration: appDecoration,
+      child: Stack(
+        children: [
+          Center(
+              child: ImageAssets.svgAssets(
+            Svg.cartIcon,
+            width: 18.w,
+            height: 18.h,
+          )),
+          Positioned(
+            right: 0,
+            top: -2,
+            child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.red,
+                ),
+                child: Text(
+                  '2',
+                  style: text10.copyWith(color: Colors.white),
+                )),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _listDishes(BuildContext context) {
+    return Expanded(
+      child: ListView.separated(
+          padding: EdgeInsets.zero,
+          separatorBuilder: (context, index) {
+            return SizedBox(height: 10.h);
+          },
+          itemCount: 5,
+          itemBuilder: (context, index) {
+            return const DishWidget();
+          }),
+    );
+  }
+
+  Widget _dropdownWiget(BuildContext context) {
+    return SizedBox(
+      width: 100.w,
+      child: DropdownButton(
+        value: items[0],
+        menuMaxHeight: 200.h,
+        icon: const Icon(
+          Icons.keyboard_arrow_down,
+        ),
+        isExpanded: true,
+        items: items
+            .map((e) => DropdownMenuItem(
+                  alignment: Alignment.center,
+                  value: e,
+                  child: Text(e, style: text14.orange),
+                ))
+            .toList(),
+        underline: const SizedBox(),
+        onChanged: (value) {},
       ),
     );
   }

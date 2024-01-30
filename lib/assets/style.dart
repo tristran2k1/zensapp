@@ -117,6 +117,8 @@ extension TextStyleExt on TextStyle {
   TextStyle get backgroundColor => copyWith(color: const Color(0xff292152));
   TextStyle get blue => copyWith(color: Colors.blue);
   TextStyle get green => copyWith(color: Colors.green);
+  TextStyle get graniteGray => copyWith(color: const Color(0xff616161));
+  TextStyle get orange => copyWith(color: const Color(0xFFFE724C));
 }
 
 TextTheme get commonTextTheme => TextTheme(
@@ -217,4 +219,40 @@ TextTheme textTheme(BuildContext context) {
 
 TextTheme primaryTextTheme(BuildContext context) {
   return Theme.of(context).primaryTextTheme;
+}
+
+BoxDecoration get appDecoration => BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+    );
+
+extension BoxDecorationExtension on BoxDecoration {
+  BoxDecoration get circle => copyWith(
+        borderRadius: BorderRadius.circular(100),
+      );
+
+  BoxDecoration get greyShadow => copyWith(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: .5,
+            blurRadius: 10,
+            offset: const Offset(1, 1),
+          )
+        ],
+      );
+  BoxDecoration get orangeShadow => copyWith(
+        boxShadow: [
+          BoxShadow(
+            color: outrageousOrange.withOpacity(0.4),
+            spreadRadius: .5,
+            blurRadius: 10,
+            offset: const Offset(1, 1),
+          )
+        ],
+      );
+
+  BoxDecoration get orangeBox => copyWith(
+        color: outrageousOrange,
+      );
 }

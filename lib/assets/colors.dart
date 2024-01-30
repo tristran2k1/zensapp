@@ -39,6 +39,8 @@ const Color kcDavyGrey = Color(0xFF5E5E5E);
 const Color kcLightSalmonPink = Color(0xFFFA9E93);
 const Color kcNickel = Color(0xFF737373);
 const Color kcBottom = Color(0xff848683);
+const Color graniteGray = Color(0xff616161);
+const Color culturedPearl = Color(0xffF5F5F5);
 const Color kcBackground = Color(0xff0F172A);
 
 const Color princetonOrange = Color(0xFFFF8124);
