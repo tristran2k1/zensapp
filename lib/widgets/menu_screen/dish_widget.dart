@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zens_app/assets/index.dart';
 import 'package:zens_app/models/drink_model.dart';
+import 'package:zens_app/routers/routes.dart';
 import 'package:zens_app/storages/share_preference.dart';
 
 class DishWidget extends StatefulWidget {
@@ -153,7 +154,8 @@ class _DishWidgetState extends State<DishWidget> {
         backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
         elevation: MaterialStateProperty.all<double>(0),
       ),
-      onPressed: () {},
+      onPressed: () =>
+          Navigator.pushNamed(context, RouterName.drinkDetailScreen),
       icon: Container(
         padding: const EdgeInsets.all(5),
         decoration: appDecoration.orangeBox.orangeShadow.copyWith(

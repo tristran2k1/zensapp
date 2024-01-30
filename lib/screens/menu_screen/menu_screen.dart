@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:zens_app/assets/index.dart';
 import 'package:zens_app/models/drink_model.dart';
 import 'package:zens_app/repositories/menu_screen/menu_repo.dart';
+import 'package:zens_app/storages/share_preference.dart';
 import 'package:zens_app/widgets/menu_screen/dish_widget.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -19,6 +20,9 @@ class _MenuScreenState extends State<MenuScreen> {
     super.initState();
     MenuRepo().getDrinks().then((value) {
       _drinks.value = value;
+    });
+    UserPrefs.I.getCart().then((value) {
+      _counterOrder.value = value.length;
     });
   }
 

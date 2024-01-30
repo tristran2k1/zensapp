@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zens_app/repositories/menu_screen/menu_repo.dart';
+import 'package:zens_app/screens/drink_detail_screen/drink_detail_screen.dart';
 import 'package:zens_app/screens/menu_screen/menu_screen.dart';
 
 RouteFactory routes() {
@@ -9,6 +9,9 @@ RouteFactory routes() {
     var name = settings.name;
 
     switch (name) {
+      case RouterName.drinkDetailScreen:
+        screen = const DrinkDetailScreen();
+        break;
       case RouterName.initScreen:
       default:
         // screen = const SplashScreen();
@@ -25,4 +28,5 @@ RouteFactory routes() {
 
 abstract class RouterName {
   static const String initScreen = '/';
+  static const String drinkDetailScreen = '/detail';
 }
