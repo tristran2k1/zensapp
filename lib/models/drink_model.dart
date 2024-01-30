@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class Drink {
   int? id;
   String? name;
@@ -7,6 +9,7 @@ class Drink {
   double? salePrice;
   double? favorite;
   double? rating;
+  bool isFavorite = false;
   Drink({
     this.id,
     this.name,
@@ -100,5 +103,24 @@ class Drink {
 
   List<Drink> fromJsonList(List<dynamic> jsonList) {
     return jsonList.map((e) => Drink.fromJson(e)).toList();
+  }
+
+  String getPrice() {
+    if (price != null) {
+      final numberFormat = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
+      final formattedNumber = numberFormat.format(price);
+      return formattedNumber;
+    }
+    return '0';
+  }
+
+  String getFavorite() => formatNumber(favorite ?? 0.0);
+
+  String getRating() => formatNumber(rating ?? 0.0);
+
+  String formatNumber(double value) {
+    final numberFormat = NumberFormat.compact();
+    final formattedNumber = numberFormat.format(value);
+    return formattedNumber;
   }
 }

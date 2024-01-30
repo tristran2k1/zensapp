@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zens_app/repositories/menu_screen/menu_repo.dart';
 import 'package:zens_app/screens/menu_screen/menu_screen.dart';
 
 RouteFactory routes() {
@@ -9,11 +10,10 @@ RouteFactory routes() {
 
     switch (name) {
       case RouterName.initScreen:
+      default:
+        // screen = const SplashScreen();
         screen = const MenuScreen();
         break;
-
-      default:
-      // screen = const SplashScreen();
     }
 
     return MaterialPageRoute(

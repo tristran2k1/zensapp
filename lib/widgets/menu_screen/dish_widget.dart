@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:zens_app/assets/index.dart';
+import 'package:zens_app/models/drink_model.dart';
+import 'package:zens_app/storages/share_preference.dart';
 
-class DishWidget extends StatelessWidget {
-  const DishWidget({super.key});
+class DishWidget extends StatefulWidget {
+  const DishWidget({super.key, required this.drink});
+  final Drink drink;
+
+  @override
+  State<DishWidget> createState() => _DishWidgetState();
+}
+
+class _DishWidgetState extends State<DishWidget> {
+  final ValueNotifier<bool> _isFavorite = ValueNotifier(false);
+  @override
+  void initState() {
+    _isFavorite.value = widget.drink.isFavorite;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 24.w),
+      margin: EdgeInsets.symmetric(horizontal: 24.w).copyWith(bottom: 24.h),
       decoration: appDecoration,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -18,9 +33,9 @@ class DishWidget extends StatelessWidget {
             height: 200.h,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20.r),
-              image: const DecorationImage(
+              image: DecorationImage(
                 image: AssetImage(
-                  'assets/images/img_prod_1.png',
+                  widget.drink.img ?? 'assets/images/img_prod_1.png',
                 ),
                 fit: BoxFit.cover,
               ),
@@ -41,28 +56,35 @@ class DishWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(24.r),
                   ),
                   child: Text(
-                    '44.000đ',
+                    widget.drink.getPrice(),
                     style: text14.semiBold,
                   ),
                 ),
-                IconButton(
-                    padding: EdgeInsets.zero,
-                    style: ButtonStyle(
-                      padding: MaterialStateProperty.all(EdgeInsets.all(16.sp)),
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.transparent),
-                      elevation: MaterialStateProperty.all<double>(0),
-                    ),
-                    onPressed: () {},
-                    icon: Container(
-                      width: 32.w,
-                      height: 32.h,
-                      decoration: appDecoration.orangeShadow.circle,
-                      child: const Icon(
-                        Icons.favorite_outline,
-                        size: 17,
+                ValueListenableBuilder(
+                  valueListenable: _isFavorite,
+                  builder: (context, _, __) => IconButton(
+                      padding: EdgeInsets.zero,
+                      style: ButtonStyle(
+                        padding:
+                            MaterialStateProperty.all(EdgeInsets.all(16.sp)),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Colors.transparent),
+                        elevation: MaterialStateProperty.all<double>(0),
                       ),
-                    ))
+                      onPressed: () {
+                        _isFavorite.value = !_isFavorite.value;
+                        UserPrefs.I.updateCart(widget.drink.id.toString());
+                      },
+                      icon: Container(
+                        width: 32.w,
+                        height: 32.h,
+                        padding: EdgeInsets.all(7.sp),
+                        decoration: appDecoration.orangeShadow.circle,
+                        child: _isFavorite.value
+                            ? ImageAssets.svgAssets(Svg.heartIcon)
+                            : ImageAssets.svgAssets(Svg.heartOutlineIcon),
+                      )),
+                )
               ],
             ),
           ),
@@ -74,24 +96,25 @@ class DishWidget extends StatelessWidget {
               children: [
                 SizedBox(height: 10.h),
                 Text(
-                  "Trà Đào mix Dứa",
+                  widget.drink.name ?? "Trà Mix",
                   style: text18.semiBold,
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  "Đào, chanh Quảng Đông, đường tinh luyện, hương nnn",
+                  widget.drink.description ?? "Trà Mix",
                   style: text14.graniteGray,
                   overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: 10.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
-                        _textIcon(context, Svg.startIcon, "4.7"),
+                        _textIcon(
+                            context, Svg.startIcon, widget.drink.getRating()),
                         SizedBox(width: 32.w),
-                        _textIcon(context, Svg.heartIcon, "4.7"),
+                        _textIcon(
+                            context, Svg.heartIcon, widget.drink.getFavorite()),
                       ],
                     ),
                     _addButton(context),
@@ -100,7 +123,7 @@ class DishWidget extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 6.h),
         ],
       ),
     );
@@ -109,7 +132,11 @@ class DishWidget extends StatelessWidget {
   Widget _textIcon(BuildContext context, String startIcon, String value) {
     return Row(
       children: [
-        ImageAssets.svgAssets(startIcon, width: 16.w, height: 16.h),
+        ImageAssets.svgAssets(
+          startIcon,
+          width: 16.w,
+          height: 16.h,
+        ),
         SizedBox(width: 4.w),
         Text(
           value,
@@ -121,6 +148,11 @@ class DishWidget extends StatelessWidget {
 
   Widget _addButton(BuildContext context) {
     return IconButton(
+      style: ButtonStyle(
+        padding: MaterialStateProperty.all(EdgeInsets.all(12.sp)),
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+        elevation: MaterialStateProperty.all<double>(0),
+      ),
       onPressed: () {},
       icon: Container(
         padding: const EdgeInsets.all(5),
