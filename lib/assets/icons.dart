@@ -5,6 +5,7 @@ class Svg {
   static const String orangeCartIcon = 'assets/icons/orange_cart_icon.svg';
   static const String startIcon = 'assets/icons/star_icon.svg';
   static const String plusIcon = 'assets/icons/plus_icon.svg';
+  static const String minusIcon = 'assets/icons/minus_icon.svg';
   static const String heartOutlineIcon = 'assets/icons/heart_outline_icon.svg';
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zens_app/models/drink_model.dart';
 import 'package:zens_app/screens/drink_detail_screen/drink_detail_screen.dart';
 import 'package:zens_app/screens/menu_screen/menu_screen.dart';
 
@@ -10,7 +11,8 @@ RouteFactory routes() {
 
     switch (name) {
       case RouterName.drinkDetailScreen:
-        screen = const DrinkDetailScreen();
+        final arguments = settings.arguments as Map?;
+        screen = DrinkDetailScreen(drink: arguments?['drink'] as Drink);
         break;
       case RouterName.initScreen:
       default:

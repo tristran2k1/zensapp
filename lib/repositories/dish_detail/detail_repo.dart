@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:zens_app/models/option_model.dart';
-import 'package:zens_app/models/size_model.dart';
-import 'package:zens_app/models/topping_model.dart';
 
 class DetailRepo {
   final optionSrc = 'assets/data/option_json.json';
@@ -17,17 +15,17 @@ class DetailRepo {
     return res;
   }
 
-  Future<List<DrinkSize>> getSizes() async {
+  Future<List<DrinkOption>> getSizes() async {
     final String response = await rootBundle.loadString(sizeSrc);
     final data = await json.decode(response);
-    final res = DrinkSize().fromJsonList(data);
+    final res = DrinkOption().fromJsonList(data);
     return res;
   }
 
-  Future<List<Topping>> getToppings() async {
+  Future<List<DrinkOption>> getToppings() async {
     final String response = await rootBundle.loadString(toppingSrc);
     final data = await json.decode(response);
-    final res = Topping().fromJsonList(data);
+    final res = DrinkOption().fromJsonList(data);
     return res;
   }
 }

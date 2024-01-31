@@ -3,6 +3,7 @@ import 'package:zens_app/assets/index.dart';
 import 'package:zens_app/models/drink_model.dart';
 import 'package:zens_app/routers/routes.dart';
 import 'package:zens_app/storages/share_preference.dart';
+import 'package:zens_app/widgets/common/icon_text_widget.dart';
 
 class DishWidget extends StatefulWidget {
   const DishWidget({super.key, required this.drink});
@@ -41,52 +42,46 @@ class _DishWidgetState extends State<DishWidget> {
                 fit: BoxFit.cover,
               ),
             ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  margin: EdgeInsets.all(16.sp),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 8.h,
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 8.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: whiteColor,
+                      borderRadius: BorderRadius.circular(24.r),
+                    ),
+                    child: Text(
+                      widget.drink.getPrice(),
+                      style: text14.semiBold,
+                    ),
                   ),
-                  decoration: BoxDecoration(
-                    color: whiteColor,
-                    borderRadius: BorderRadius.circular(24.r),
-                  ),
-                  child: Text(
-                    widget.drink.getPrice(),
-                    style: text14.semiBold,
-                  ),
-                ),
-                ValueListenableBuilder(
-                  valueListenable: _isFavorite,
-                  builder: (context, _, __) => IconButton(
-                      padding: EdgeInsets.zero,
-                      style: ButtonStyle(
-                        padding:
-                            MaterialStateProperty.all(EdgeInsets.all(16.sp)),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            Colors.transparent),
-                        elevation: MaterialStateProperty.all<double>(0),
-                      ),
-                      onPressed: () {
-                        _isFavorite.value = !_isFavorite.value;
-                        UserPrefs.I.updateCart(widget.drink.id.toString());
-                      },
-                      icon: Container(
-                        width: 32.w,
-                        height: 32.h,
-                        padding: EdgeInsets.all(7.sp),
-                        decoration: appDecoration.orangeShadow.circle,
-                        child: _isFavorite.value
-                            ? ImageAssets.svgAssets(Svg.heartIcon)
-                            : ImageAssets.svgAssets(Svg.heartOutlineIcon),
-                      )),
-                )
-              ],
+                  ValueListenableBuilder(
+                    valueListenable: _isFavorite,
+                    builder: (context, _, __) => InkWell(
+                        onTap: () {
+                          _isFavorite.value = !_isFavorite.value;
+                          UserPrefs.I.updateCart(widget.drink.id.toString());
+                        },
+                        child: Container(
+                          width: 32.w,
+                          height: 32.h,
+                          padding: EdgeInsets.all(7.sp),
+                          decoration: appDecoration.orangeShadow.circle,
+                          child: _isFavorite.value
+                              ? ImageAssets.svgAssets(Svg.heartIcon)
+                              : ImageAssets.svgAssets(Svg.heartOutlineIcon),
+                        )),
+                  )
+                ],
+              ),
             ),
           ),
           SizedBox(height: 12.h),
@@ -106,21 +101,27 @@ class _DishWidgetState extends State<DishWidget> {
                   style: text14.graniteGray,
                   overflow: TextOverflow.ellipsis,
                 ),
+                SizedBox(height: 12.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
-                        _textIcon(
-                            context, Svg.startIcon, widget.drink.getRating()),
+                        IconText(
+                          iconPath: Svg.startIcon,
+                          text: widget.drink.getRating(),
+                        ),
                         SizedBox(width: 32.w),
-                        _textIcon(
-                            context, Svg.heartIcon, widget.drink.getFavorite()),
+                        IconText(
+                          iconPath: Svg.heartIcon,
+                          text: widget.drink.getFavorite(),
+                        ),
                       ],
                     ),
-                    _addButton(context),
+                    _addButton(context, widget.drink),
                   ],
                 ),
+                SizedBox(height: 16.h),
               ],
             ),
           ),
@@ -129,43 +130,21 @@ class _DishWidgetState extends State<DishWidget> {
       ),
     );
   }
+}
 
-  Widget _textIcon(BuildContext context, String startIcon, String value) {
-    return Row(
-      children: [
-        ImageAssets.svgAssets(
-          startIcon,
-          width: 16.w,
-          height: 16.h,
+Widget _addButton(BuildContext context, Drink drink) {
+  return InkWell(
+    onTap: () => Navigator.pushNamed(context, RouterName.drinkDetailScreen,
+        arguments: {'drink': drink}),
+    child: Container(
+      padding: const EdgeInsets.all(5),
+      decoration: appDecoration.orangeBox.orangeShadow.copyWith(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(12.sp),
+          bottomRight: Radius.circular(12.sp),
         ),
-        SizedBox(width: 4.w),
-        Text(
-          value,
-          style: text12.graniteGray,
-        ),
-      ],
-    );
-  }
-
-  Widget _addButton(BuildContext context) {
-    return IconButton(
-      style: ButtonStyle(
-        padding: MaterialStateProperty.all(EdgeInsets.all(12.sp)),
-        backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-        elevation: MaterialStateProperty.all<double>(0),
       ),
-      onPressed: () =>
-          Navigator.pushNamed(context, RouterName.drinkDetailScreen),
-      icon: Container(
-        padding: const EdgeInsets.all(5),
-        decoration: appDecoration.orangeBox.orangeShadow.copyWith(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(12.sp),
-            bottomRight: Radius.circular(12.sp),
-          ),
-        ),
-        child: ImageAssets.svgAssets(Svg.plusIcon, width: 21.w, height: 21.h),
-      ),
-    );
-  }
+      child: ImageAssets.svgAssets(Svg.plusIcon, width: 21.w, height: 21.h),
+    ),
+  );
 }

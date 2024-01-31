@@ -227,6 +227,10 @@ BoxDecoration get appDecoration => BoxDecoration(
     );
 
 extension BoxDecorationExtension on BoxDecoration {
+  BoxDecoration get noborder => copyWith(
+        borderRadius: BorderRadius.zero,
+      );
+
   BoxDecoration get circle => copyWith(
         borderRadius: BorderRadius.circular(100),
       );
