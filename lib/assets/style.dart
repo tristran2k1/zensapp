@@ -227,7 +227,7 @@ BoxDecoration get appDecoration => BoxDecoration(
     );
 
 extension BoxDecorationExtension on BoxDecoration {
-  BoxDecoration get noborder => copyWith(
+  BoxDecoration get rectangle => copyWith(
         borderRadius: BorderRadius.zero,
       );
 

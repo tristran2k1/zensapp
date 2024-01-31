@@ -22,18 +22,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return GestureDetector(
+      onTap: () => WidgetsBinding.instance.focusManager.primaryFocus!.unfocus(),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        navigatorKey: navigatorKey,
+        onGenerateRoute: routes(),
+        initialRoute: RouterName.initScreen,
+        navigatorObservers: [MyNavigatorObserver()],
       ),
-      navigatorKey: navigatorKey,
-      onGenerateRoute: routes(),
-      initialRoute: RouterName.initScreen,
-      navigatorObservers: [MyNavigatorObserver()],
-      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }

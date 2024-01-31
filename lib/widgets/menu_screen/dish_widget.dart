@@ -68,7 +68,8 @@ class _DishWidgetState extends State<DishWidget> {
                     builder: (context, _, __) => InkWell(
                         onTap: () {
                           _isFavorite.value = !_isFavorite.value;
-                          UserPrefs.I.updateCart(widget.drink.id.toString());
+                          UserPrefs.I
+                              .updateFavourites(widget.drink.id.toString());
                         },
                         child: Container(
                           width: 32.w,

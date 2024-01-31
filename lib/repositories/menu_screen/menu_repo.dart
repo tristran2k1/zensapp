@@ -10,7 +10,7 @@ class MenuRepo {
     final String response = await rootBundle.loadString(source);
     final data = await json.decode(response);
     var res = Drink().fromJsonList(data);
-    final liked = await UserPrefs.I.getCart();
+    final liked = await UserPrefs.I.getFavourites();
     for (var item in res) {
       item.isFavorite = liked.contains(item.id.toString());
     }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:zens_app/assets/index.dart';
 import 'package:zens_app/models/drink_model.dart';
 import 'package:zens_app/repositories/menu_screen/menu_repo.dart';
+import 'package:zens_app/screens/drink_detail_screen/drink_detail_screen.dart';
 import 'package:zens_app/storages/share_preference.dart';
 import 'package:zens_app/widgets/menu_screen/dish_widget.dart';
 
@@ -21,7 +22,7 @@ class _MenuScreenState extends State<MenuScreen> {
     MenuRepo().getDrinks().then((value) {
       _drinks.value = value;
     });
-    UserPrefs.I.getCart().then((value) {
+    UserPrefs.I.getFavourites().then((value) {
       _counterOrder.value = value.length;
     });
   }
@@ -78,7 +79,12 @@ class _MenuScreenState extends State<MenuScreen> {
                   color: outrageousOrange,
                 ),
               ),
-              Text('${_drinks.value.length} sự lựa chọn cho bạn', style: text16)
+              ValueListenableBuilder(
+                  valueListenable: _drinks,
+                  builder: (context, _, __) => Text(
+                        '${_drinks.value.length} sự lựa chọn cho bạn',
+                        style: text16,
+                      ))
             ],
           ),
         )
@@ -99,43 +105,8 @@ class _MenuScreenState extends State<MenuScreen> {
               _dropdownWiget(context),
             ],
           ),
-          _yourCart(context),
+          const CartButton(),
         ],
-      ),
-    );
-  }
-
-  Widget _yourCart(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: _counterOrder,
-      builder: (context, _, __) => Container(
-        width: 40.w,
-        height: 40.h,
-        decoration: appDecoration,
-        child: Stack(
-          children: [
-            Center(
-                child: ImageAssets.svgAssets(
-              Svg.cartIcon,
-              width: 18.w,
-              height: 18.h,
-            )),
-            Positioned(
-              right: 0,
-              top: -2,
-              child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.red,
-                  ),
-                  child: Text(
-                    _counterOrder.value.toString(),
-                    style: text10.copyWith(color: Colors.white),
-                  )),
-            )
-          ],
-        ),
       ),
     );
   }
