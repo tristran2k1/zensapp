@@ -16,26 +16,13 @@ This is a simple Flutter mobile app that lets users search for and buy drinks
 
 ### In terms of application, the completed functions include:
 - User interface according to design
-- mark as favorite: this data is being saved locally
+- Mark as favorite: this data is being saved locally
+- Choose dishes, customize size, toppings, other options, quantity of dishes ordered
+- The price of the item is updated as soon as the user adjusts the selections
+- After placing an order, the order will be saved in the cart (local database) for the user to continue selecting items
 
-  ### example
-  ```dart
-return  Scaffold(
-	backgroundColor:  Colors.white,
-	body:  Container(
-		child:  FoldableList(
-			animationType:  ANIMATION_TYPE.NONE,
-			foldableItems:  this.expandedWidgetList,
-			items:  this.simpleWidgetList
-		)
-	)
-);
-```
-A few resources to get you started if this is your first Flutter project:
+## Demo video
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+https://github.com/tristran2k1/zensapp/blob/main/assets/demo/demo-video.mp4
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
