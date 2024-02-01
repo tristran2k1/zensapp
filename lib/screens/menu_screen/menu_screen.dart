@@ -4,6 +4,7 @@ import 'package:zens_app/models/drink_model.dart';
 import 'package:zens_app/repositories/menu_screen/menu_repo.dart';
 import 'package:zens_app/screens/drink_detail_screen/drink_detail_screen.dart';
 import 'package:zens_app/storages/share_preference.dart';
+import 'package:zens_app/widgets/common/cart_button.dart';
 import 'package:zens_app/widgets/menu_screen/dish_widget.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -18,13 +19,14 @@ class _MenuScreenState extends State<MenuScreen> {
   final ValueNotifier<int> _counterOrder = ValueNotifier(0);
   @override
   void initState() {
-    super.initState();
     MenuRepo().getDrinks().then((value) {
       _drinks.value = value;
     });
-    UserPrefs.I.getFavourites().then((value) {
+    UserPrefs.I.getCart().then((value) {
       _counterOrder.value = value.length;
+      print("Cart: ${_counterOrder.value}");
     });
+    super.initState();
   }
 
   @override
@@ -105,7 +107,10 @@ class _MenuScreenState extends State<MenuScreen> {
               _dropdownWiget(context),
             ],
           ),
-          const CartButton(),
+          ValueListenableBuilder(
+            valueListenable: _counterOrder,
+            builder: (context, _, __) => CartButton(value: _counterOrder.value),
+          ),
         ],
       ),
     );

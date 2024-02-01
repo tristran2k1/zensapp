@@ -8,8 +8,12 @@ import 'package:zens_app/models/cart_item.dart';
 import 'package:zens_app/models/drink_model.dart';
 import 'package:zens_app/models/option_model.dart';
 import 'package:zens_app/repositories/dish_detail/detail_repo.dart';
+import 'package:zens_app/routers/routes.dart';
 import 'package:zens_app/storages/share_preference.dart';
+import 'package:zens_app/widgets/common/back_button.dart';
+import 'package:zens_app/widgets/common/cart_button.dart';
 import 'package:zens_app/widgets/common/icon_text_widget.dart';
+import 'package:zens_app/widgets/drink_detail/radio_widget.dart';
 
 class DrinkDetailScreen extends StatefulWidget {
   const DrinkDetailScreen({super.key, required this.drink});
@@ -25,16 +29,21 @@ class DrinkDetailScreenState extends State<DrinkDetailScreen> {
   final ValueNotifier<List<RadioModel>> _toppings = ValueNotifier([]);
   final ValueNotifier<int> _quantity = ValueNotifier(1);
   TotalPriceStream totalPriceStream = TotalPriceStream();
+  final ValueNotifier<int> _counterOrder = ValueNotifier(0);
 
-  TextEditingController _noteController = TextEditingController();
+  final TextEditingController _noteController = TextEditingController();
 
   @override
   void initState() {
     DetailRepo().getOptions().then((value) {
+      UserPrefs.I.getCart().then((value) {
+        _counterOrder.value = value.length;
+      });
       for (var option in value) {
         _options.value.add(RadioModel(isSelected: false, option: option));
       }
     });
+
     DetailRepo().getSizes().then((value) {
       for (int i = 0; i < value.length; i++) {
         if (i == 0) {
@@ -56,6 +65,17 @@ class DrinkDetailScreenState extends State<DrinkDetailScreen> {
       }
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _toppings.dispose();
+    _quantity.dispose();
+    _sizes.dispose();
+    _options.dispose();
+    _noteController.dispose();
+    totalPriceStream.dispose();
+    super.dispose();
   }
 
   int getSelectedOptionIndex(List<RadioModel> options) {
@@ -81,13 +101,18 @@ class DrinkDetailScreenState extends State<DrinkDetailScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const BackButton(),
+              const CustomBackButton(),
               Container(
-                  margin: EdgeInsets.symmetric(
-                    horizontal: 20.sp,
-                    vertical: 40.sp,
-                  ),
-                  child: const CartButton()),
+                margin: EdgeInsets.symmetric(
+                  horizontal: 20.sp,
+                  vertical: 40.sp,
+                ),
+                child: ValueListenableBuilder(
+                  valueListenable: _counterOrder,
+                  builder: (context, _, __) =>
+                      CartButton(value: _counterOrder.value),
+                ),
+              ),
             ],
           ),
           FutureBuilder<ui.Image>(
@@ -133,6 +158,15 @@ class DrinkDetailScreenState extends State<DrinkDetailScreen> {
                   _iconBtn(context, icon: Svg.minusIcon, onTap: () {
                     if (_quantity.value > 1) {
                       _quantity.value = _quantity.value - 1;
+                      totalPriceStream.addItem(
+                        CartItem(
+                          id: widget.drink.id as int,
+                          sizeid: getSelectedOptionIndex(_sizes.value),
+                          toppingid: getSelectedOptionIndex(_toppings.value),
+                          optionid: getSelectedOptionIndex(_options.value),
+                          quantity: _quantity.value,
+                        ),
+                      );
                     }
                   }),
                   SizedBox(width: 20.w),
@@ -143,6 +177,15 @@ class DrinkDetailScreenState extends State<DrinkDetailScreen> {
                   SizedBox(width: 20.w),
                   _iconBtn(context, icon: Svg.plusIcon, onTap: () {
                     _quantity.value = _quantity.value + 1;
+                    totalPriceStream.addItem(
+                      CartItem(
+                        id: widget.drink.id as int,
+                        sizeid: getSelectedOptionIndex(_sizes.value),
+                        toppingid: getSelectedOptionIndex(_toppings.value),
+                        optionid: getSelectedOptionIndex(_options.value),
+                        quantity: _quantity.value,
+                      ),
+                    );
                   }),
                 ],
               ),
@@ -254,12 +297,12 @@ class DrinkDetailScreenState extends State<DrinkDetailScreen> {
               children: [
                 InkWell(
                     onTap: () {
-                      // setState(() {
-                      //   for (var element in options) {
-                      //     element.isSelected = false;
-                      //   }
-                      //   options[index].isSelected = true;
-                      // });
+                      setState(() {
+                        for (var element in options) {
+                          element.isSelected = false;
+                        }
+                        options[index].isSelected = true;
+                      });
                       totalPriceStream.addItem(
                         CartItem(
                           id: widget.drink.id as int,
@@ -388,10 +431,11 @@ class DrinkDetailScreenState extends State<DrinkDetailScreen> {
               sizeid: size,
               toppingid: tp,
               optionid: opt,
+              note: _noteController.text,
               quantity: _quantity.value,
             ),
           );
-          Navigator.pop(context);
+          Navigator.pushReplacementNamed(context, RouterName.initScreen);
         } else {
           const snackBar = SnackBar(
               content: Text('Bạn vui lòng chọn size!'),
@@ -416,7 +460,6 @@ class DrinkDetailScreenState extends State<DrinkDetailScreen> {
                 stream: totalPriceStream.priceStream,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    print(snapshot.data);
                     return Text(
                       'Thêm vào đơn - ${_getTotal(
                         snapshot.data ?? CartItem(id: widget.drink.id as int),
@@ -439,157 +482,40 @@ class DrinkDetailScreenState extends State<DrinkDetailScreen> {
       ),
     );
   }
-}
 
-String _getTotal(
-  CartItem data, {
-  required List<RadioModel> sizes,
-  required List<RadioModel> toppings,
-  required List<RadioModel> options,
-  required double price,
-}) {
-  var pSize, pTopping, pOption;
-  if (data.sizeid == null ||
-      data.sizeid == -1 ||
-      (data.sizeid ?? 0) >= sizes.length) {
-    pSize = sizes[0].option.price;
-  } else {
-    pSize = sizes[data.sizeid ?? 0].option.price;
+  String _getTotal(
+    CartItem data, {
+    required List<RadioModel> sizes,
+    required List<RadioModel> toppings,
+    required List<RadioModel> options,
+    required double price,
+  }) {
+    var pSize, pTopping, pOption;
+    if (data.sizeid == null ||
+        data.sizeid == -1 ||
+        (data.sizeid ?? 0) >= sizes.length) {
+      pSize = sizes[0].option.price;
+    } else {
+      pSize = sizes[data.sizeid ?? 0].option.price;
+    }
+
+    if (data.toppingid == null || data.toppingid == -1) {
+      pTopping = 0;
+    } else {
+      pTopping = toppings[data.toppingid ?? 0].option.price;
+    }
+
+    if (data.optionid == null || data.optionid == -1) {
+      pOption = 0;
+    } else {
+      pOption = options[data.optionid ?? 0].option.price;
+    }
+
+    final total = (pSize + pTopping + pOption + price) * (data.quantity ?? 1);
+    final numberFormat = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
+    final formattedNumber = numberFormat.format(total);
+    return formattedNumber;
   }
-
-  if (data.toppingid == null || data.toppingid == -1) {
-    pTopping = 0;
-  } else {
-    pTopping = toppings[data.toppingid ?? 0].option.price;
-  }
-
-  if (data.optionid == null || data.optionid == -1) {
-    pOption = 0;
-  } else {
-    pOption = options[data.optionid ?? 0].option.price;
-  }
-
-  final total = (pSize + pTopping + pOption + price) * (data.quantity ?? 1);
-  final numberFormat = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
-  final formattedNumber = numberFormat.format(total);
-  return formattedNumber;
-}
-
-class BackButton extends StatelessWidget {
-  const BackButton({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 40.sp),
-      child: InkWell(
-        onTap: () => Navigator.pop(context),
-        child: Container(
-          width: 40.w,
-          height: 40.h,
-          decoration: appDecoration,
-          child: Center(
-              child: ImageAssets.svgAssets(
-            Svg.leftArrowIcon,
-            width: 8.w,
-            height: 16.h,
-          )),
-        ),
-      ),
-    );
-  }
-}
-
-class CartButton extends StatefulWidget {
-  const CartButton({super.key});
-
-  @override
-  State<CartButton> createState() => _CartButtonState();
-}
-
-class _CartButtonState extends State<CartButton> {
-  final ValueNotifier<int> _counterOrder = ValueNotifier(0);
-
-  @override
-  void initState() {
-    UserPrefs.I.getCart().then((value) {
-      _counterOrder.value = value.length;
-    });
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {},
-      child: Container(
-        width: 40.w,
-        height: 40.h,
-        decoration: appDecoration,
-        child: Stack(
-          children: [
-            Center(
-              child: ImageAssets.svgAssets(
-                Svg.cartIcon,
-                width: 18.w,
-                height: 18.h,
-              ),
-            ),
-            Positioned(
-              right: 0,
-              top: -2,
-              child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.red,
-                  ),
-                  child: Text(
-                    _counterOrder.value.toString(),
-                    style: text10.copyWith(color: Colors.white),
-                  )),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class RadioItem extends StatelessWidget {
-  final RadioModel item;
-
-  const RadioItem({super.key, required this.item});
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: <Widget>[
-            Icon(
-              item.isSelected
-                  ? Icons.radio_button_checked
-                  : Icons.radio_button_unchecked,
-              color: outrageousOrange,
-            ),
-            SizedBox(width: 12.w),
-            Text(item.option.name ?? "", style: text14),
-          ],
-        ),
-        Text(item.option.getPrice(), style: text14),
-      ],
-    );
-  }
-}
-
-class RadioModel {
-  bool isSelected;
-  final DrinkOption option;
-
-  RadioModel({required this.isSelected, required this.option});
 }
 
 enum OptionType {
@@ -606,5 +532,9 @@ class TotalPriceStream {
   void addItem(CartItem data) {
     item = data;
     totalPrice.sink.add(item);
+  }
+
+  void dispose() {
+    totalPrice.close();
   }
 }
