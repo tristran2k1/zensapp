@@ -297,12 +297,12 @@ class DrinkDetailScreenState extends State<DrinkDetailScreen> {
               children: [
                 InkWell(
                     onTap: () {
-                      setState(() {
-                        for (var element in options) {
-                          element.isSelected = false;
-                        }
-                        options[index].isSelected = true;
-                      });
+                      // setState(() {
+                      //   for (var element in options) {
+                      //     element.isSelected = false;
+                      //   }
+                      //   options[index].isSelected = true;
+                      // });
                       totalPriceStream.addItem(
                         CartItem(
                           id: widget.drink.id as int,
